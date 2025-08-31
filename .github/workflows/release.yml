@@ -50,7 +50,7 @@ jobs:
         # setup a separate job which does clone + tag, but felt like this was "good enough" for now.
         continue-on-error: true
         with:
-          github-token: ${{ secrets.GH_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             github.rest.git.createRef({
               owner: context.repo.owner,
@@ -63,9 +63,10 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref,'refs/heads/support-') }}
         uses: softprops/action-gh-release@v2
         with:
-          token: ${{ secrets.GH_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ env.MATTERMOST_VERSION }}
           files: |
             mattermost-${{ env.MATTERMOST_VERSION }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
             mattermost-${{ env.MATTERMOST_VERSION }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz.sha512sum
   
+
