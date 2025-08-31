@@ -17,3 +17,4 @@ go*.tar.gz*
 
 tmp
 build.env
+.idea/
