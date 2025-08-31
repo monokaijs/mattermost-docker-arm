@@ -47,6 +47,14 @@ jobs:
           GOARCH: ${{ matrix.arch }}
         run: docker run --mount="type=bind,source=$PWD,destination=${{ env.DOCKER_PWD }}" --rm=true --tty=true --workdir="${{ env.DOCKER_PWD }}" -e DEBIAN_RELEASE -e MATTERMOST_VERSION -e MMCTL_RELEASE -e MM_FOCALBOARD_RELEASE -e GOOS -e GOARCH -e GO_VERSION "${{ env.DOCKER_IMAGE }}" ./build.sh
 
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mattermost-${{ env.MATTERMOST_VERSION }}-${{ matrix.os }}-${{ matrix.arch }}
+          path: |
+            mattermost-${{ env.MATTERMOST_VERSION }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz
+            mattermost-${{ env.MATTERMOST_VERSION }}-${{ matrix.os }}-${{ matrix.arch }}.tar.gz.sha512sum
+
       - name: Tag release
         if: ${{ github.ref == 'refs/heads/main' || startsWith(github.ref,'refs/heads/support-') }}
         uses: actions/github-script@v7
@@ -93,6 +101,12 @@ jobs:
       - name: Set environment from runtime properties
         run: |
           cat mattermost-release.txt >> $GITHUB_ENV
+
+      - name: Download release artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: mattermost-${{ env.MATTERMOST_VERSION }}-${{ matrix.os }}-${{ matrix.arch }}
+          path: ./app/
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
